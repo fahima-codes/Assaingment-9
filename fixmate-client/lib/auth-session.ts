@@ -11,6 +11,14 @@ export interface AuthUser {
   role?: AuthRole;
 }
 
+export function isAuthRole(role: unknown): role is AuthRole {
+  return role === "customer" || role === "technician" || role === "admin";
+}
+
+export function getDashboardPath(role?: AuthRole): string {
+  return `/dashboard/${role ?? "customer"}`;
+}
+
 const AUTH_TOKEN_KEY = "fixmate_token";
 const AUTH_USER_KEY = "fixmate_user";
 

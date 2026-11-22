@@ -6,7 +6,11 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { api } from "@/lib/api";
-import { setAuthSession, type AuthUser } from "@/lib/auth-session";
+import {
+  getDashboardPath,
+  setAuthSession,
+  type AuthUser,
+} from "@/lib/auth-session";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -77,13 +81,7 @@ export function AuthForm({ mode, redirect }: AuthFormProps) {
         redirect && redirect.startsWith("/") && !redirect.startsWith("//")
           ? redirect
           : undefined;
-      const role = user?.role ?? "customer";
-      const dashboard =
-        role === "technician"
-          ? "/dashboard/technician"
-          : role === "admin"
-            ? "/dashboard/admin"
-            : "/dashboard/customer";
+      const dashboard = getDashboardPath(user?.role);
       const destination = safeRedirect ?? (isSignIn ? dashboard : "/");
       router.push(destination);
     } catch (error) {
