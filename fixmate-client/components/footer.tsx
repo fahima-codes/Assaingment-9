@@ -77,7 +77,7 @@ export function Footer() {
               {POPULAR_CATEGORIES.map((category) => (
                 <li key={category}>
                   <Link
-                    href="/services"
+                    href={`/services?category=${encodeURIComponent(category)}`}
                     className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {category}

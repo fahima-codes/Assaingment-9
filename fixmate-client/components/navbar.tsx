@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Menu, Wrench, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { getAuthUser, type AuthUser } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
@@ -17,13 +18,19 @@ const NAV_LINKS = [
 export function Navbar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [user, setUser] = useState<AuthUser | null>(null);
 
   useEffect(() => {
+    setUser(getAuthUser());
     setMobileOpen(false);
   }, [pathname]);
 
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
+
+  const navLinks = user
+    ? [...NAV_LINKS, { href: "/bookings", label: "My Bookings" }]
+    : NAV_LINKS;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-white/90 backdrop-blur">
@@ -42,7 +49,7 @@ export function Navbar() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-8">
-          {NAV_LINKS.map((link) => (
+          {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -59,12 +66,20 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <div className="hidden md:flex items-center gap-2">
-            <Button variant="outline" size="sm">
-              Sign In
+          {user ? (
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/bookings">My Bookings</Link>
             </Button>
-            <Button size="sm">Sign Up</Button>
-          </div>
+          ) : (
+            <div className="hidden md:flex items-center gap-2">
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/sign-in">Sign In</Link>
+              </Button>
+              <Button size="sm" asChild>
+                <Link href="/sign-up">Sign Up</Link>
+              </Button>
+            </div>
+          )}
           <Button
             variant="ghost"
             size="icon"
@@ -84,7 +99,7 @@ export function Navbar() {
       {mobileOpen && (
         <div className="border-t border-border bg-white md:hidden">
           <nav className="flex flex-col gap-1 px-4 py-4">
-            {NAV_LINKS.map((link) => (
+            {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -99,10 +114,20 @@ export function Navbar() {
               </Link>
             ))}
             <div className="mt-3 flex flex-col gap-2 border-t border-border pt-3">
-              <Button variant="outline" className="w-full">
-                Sign In
-              </Button>
-              <Button className="w-full">Sign Up</Button>
+              {user ? (
+                <Button variant="outline" className="w-full" asChild>
+                  <Link href="/bookings">My Bookings</Link>
+                </Button>
+              ) : (
+                <>
+                  <Button variant="outline" className="w-full" asChild>
+                    <Link href="/sign-in">Sign In</Link>
+                  </Button>
+                  <Button className="w-full" asChild>
+                    <Link href="/sign-up">Sign Up</Link>
+                  </Button>
+                </>
+              )}
             </div>
           </nav>
         </div>

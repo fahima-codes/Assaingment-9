@@ -1,0 +1,68 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 1200 900"
+  fill="none"
+  role="img"
+  aria-label="Technician repairing a broken device"
+>
+  <defs>
+    <linearGradient
+      id="bg"
+      x1="0"
+      y1="0"
+      x2="1200"
+      y2="900"
+      gradientUnits="userSpaceOnUse"
+    >
+      <stop stop-color="#1e293b" />
+      <stop offset="1" stop-color="#0f172a" />
+    </linearGradient>
+    <radialGradient
+      id="glow"
+      cx="0"
+      cy="0"
+      r="1"
+      gradientUnits="userSpaceOnUse"
+      gradientTransform="translate(950 180) scale(550)"
+    >
+      <stop stop-color="#f97316" stop-opacity="0.35" />
+      <stop offset="1" stop-color="#f97316" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="900" fill="url(#bg)" />
+  <circle cx="950" cy="180" r="550" fill="url(#glow)" />
+  <circle cx="140" cy="820" r="300" fill="#f97316" fill-opacity="0.06" />
+
+  <path
+    d="M250 180l12 34 34 12-34 12-12 34-12-34-34-12 34-12z"
+    fill="#fb923c"
+  />
+  <path
+    d="M980 620l9 25 25 9-25 9-9 25-9-25-25-9 25-9z"
+    fill="#fdba74"
+  />
+
+  <g transform="rotate(-35 520 400)">
+    <rect x="492" y="120" width="56" height="300" rx="28" fill="#f97316" />
+    <circle cx="520" cy="92" r="64" fill="#f97316" />
+    <circle cx="520" cy="92" r="28" fill="#0f172a" />
+  </g>
+
+  <g>
+    <rect
+      x="700"
+      y="170"
+      width="180"
+      height="360"
+      rx="30"
+      fill="#111827"
+      stroke="#f97316"
+      stroke-width="6"
+    />
+    <rect x="722" y="196" width="136" height="208" rx="14" fill="#1e293b" />
+    <rect x="744" y="226" width="92" height="10" rx="5" fill="#334155" />
+    <rect x="744" y="248" width="70" height="10" rx="5" fill="#334155" />
+    <circle cx="790" cy="330" r="24" fill="#f97316" />
+  </g>
+</svg>
