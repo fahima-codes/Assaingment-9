@@ -1,11 +1,11 @@
 import {
-  Armchair,
-  Hammer,
-  Paintbrush,
+  Laptop,
   Refrigerator,
   Snowflake,
-  Wrench,
+  Smartphone,
+  Tv,
   Zap,
+  WashingMachine,
   type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -19,13 +19,13 @@ interface Category {
 }
 
 const POPULAR_CATEGORIES: Category[] = [
-  { slug: "AC", label: "AC Service", icon: Snowflake },
-  { slug: "Plumbing", label: "Plumbing", icon: Wrench },
+  { slug: "Smartphone", label: "Smartphone", icon: Smartphone },
+  { slug: "Laptop & PC", label: "Laptop & PC", icon: Laptop },
+  { slug: "AC", label: "AC", icon: Snowflake },
+  { slug: "Refrigerator", label: "Refrigerator", icon: Refrigerator },
+  { slug: "TV", label: "TV", icon: Tv },
+  { slug: "Washing Machine", label: "Washing Machine", icon: WashingMachine },
   { slug: "Electrical", label: "Electrical", icon: Zap },
-  { slug: "Appliance Repair", label: "Appliance Repair", icon: Refrigerator },
-  { slug: "Carpentry", label: "Carpentry", icon: Hammer },
-  { slug: "Painting", label: "Painting", icon: Paintbrush },
-  { slug: "Furniture Assembly", label: "Furniture Assembly", icon: Armchair },
 ];
 
 export function PopularCategories() {
@@ -38,7 +38,7 @@ export function PopularCategories() {
               Popular Categories
             </h2>
             <p className="mt-2 text-muted-foreground">
-              Pick a category and get a verified technician on it.
+              Find a trusted specialist for the device that needs attention.
             </p>
           </div>
           <Button variant="outline" asChild>
@@ -46,21 +46,21 @@ export function PopularCategories() {
           </Button>
         </div>
 
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid auto-rows-fr gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {POPULAR_CATEGORIES.map((category) => {
             const Icon = category.icon;
             return (
               <Link
                 key={category.slug}
-                href={`/services?category=${category.slug}`}
-                className="group flex h-full flex-col rounded-xl border bg-card p-6 shadow-sm transition-colors hover:border-primary hover:shadow-md"
+                href={`/services?category=${encodeURIComponent(category.slug)}`}
+                className="group flex h-full items-center gap-4 rounded-xl border border-border bg-card p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent text-primary">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-accent text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                   <Icon className="h-6 w-6" />
                 </span>
-                <p className="mt-4 font-medium text-foreground">
+                <span className="font-semibold text-foreground">
                   {category.label}
-                </p>
+                </span>
               </Link>
             );
           })}

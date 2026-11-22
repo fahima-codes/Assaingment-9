@@ -61,9 +61,14 @@ export function toServiceCardData(service: Service): ServiceCardData {
 }
 
 export const SERVICE_CATEGORIES = [
+  "Smartphone",
+  "Laptop & PC",
   "AC",
-  "Plumbing",
+  "Refrigerator",
+  "TV",
+  "Washing Machine",
   "Electrical",
+  "Plumbing",
   "Appliance Repair",
   "Carpentry",
   "Painting",
