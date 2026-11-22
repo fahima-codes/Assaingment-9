@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { ApiError, api } from "@/lib/api";
-import { getAuthUser } from "@/lib/auth";
+import { getAuthUser } from "@/lib/auth-session";
 import { Button } from "@/components/ui/button";
 
 interface RequestRepairButtonProps {

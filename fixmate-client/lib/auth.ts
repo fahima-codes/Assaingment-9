@@ -1,62 +1,75 @@
-export type AuthRole = "customer" | "technician" | "admin";
+import { mongodbAdapter } from "@better-auth/mongo-adapter";
+import { betterAuth } from "better-auth";
+import { MongoClient } from "mongodb";
 
-export interface AuthUser {
-  name?: string;
-  email?: string;
-  phone?: string;
-  address?: string;
-  area?: string;
-  bio?: string;
-  image?: string;
-  role?: AuthRole;
+const mongoUri = process.env.MONGODB_URI;
+if (!mongoUri) {
+  throw new Error("MONGODB_URI must be set to use Better Auth.");
 }
 
-const AUTH_TOKEN_KEY = "fixmate_token";
-const AUTH_USER_KEY = "fixmate_user";
-
-export function getAuthToken(): string | null {
-  if (typeof window === "undefined") return null;
-  try {
-    return window.localStorage.getItem(AUTH_TOKEN_KEY);
-  } catch {
-    return null;
-  }
+const secret = process.env.BETTER_AUTH_SECRET;
+if (!secret) {
+  throw new Error("BETTER_AUTH_SECRET must be set to use Better Auth.");
 }
 
-export function getAuthUser(): AuthUser | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = window.localStorage.getItem(AUTH_USER_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as AuthUser;
-    return parsed && typeof parsed === "object" ? parsed : null;
-  } catch {
-    return null;
-  }
+const baseURL = process.env.BETTER_AUTH_URL ?? process.env.NEXT_PUBLIC_APP_URL;
+const trustedOrigins = new Set(["http://localhost:3000"]);
+if (baseURL) {
+  trustedOrigins.add(new URL(baseURL).origin);
 }
 
-export function setAuthSession(
-  token?: string | null,
-  user?: AuthUser | null,
-) {
-  if (typeof window === "undefined") return;
-  try {
-    if (token) {
-      window.localStorage.setItem(AUTH_TOKEN_KEY, token);
-    } else {
-      window.localStorage.removeItem(AUTH_TOKEN_KEY);
-    }
-
-    if (user) {
-      window.localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
-    } else {
-      window.localStorage.removeItem(AUTH_USER_KEY);
-    }
-  } catch {
-    // localStorage unavailable -> ignore
-  }
+const globalForMongo = globalThis as typeof globalThis & {
+  mongoClient?: MongoClient;
+};
+const mongoClient = globalForMongo.mongoClient ?? new MongoClient(mongoUri);
+if (process.env.NODE_ENV !== "production") {
+  globalForMongo.mongoClient = mongoClient;
 }
 
-export function clearAuthSession() {
-  setAuthSession(null, null);
-}
+export const auth = betterAuth({
+  appName: "FixMate",
+  baseURL,
+  secret,
+  database: mongodbAdapter(mongoClient.db()),
+  trustedOrigins: [...trustedOrigins],
+  emailAndPassword: {
+    enabled: true,
+  },
+  user: {
+    additionalFields: {
+      role: {
+        type: "string",
+        required: false,
+        defaultValue: "customer",
+        input: true,
+      },
+      phone: {
+        type: "string",
+        required: false,
+        input: true,
+      },
+      area: {
+        type: "string",
+        required: false,
+        input: true,
+      },
+      bio: {
+        type: "string",
+        required: false,
+        input: true,
+      },
+    },
+  },
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => ({
+          data: {
+            ...user,
+            role: user.role === "technician" ? "technician" : "customer",
+          },
+        }),
+      },
+    },
+  },
+});

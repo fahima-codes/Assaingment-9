@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { api } from "@/lib/api";
-import { setAuthSession, type AuthUser } from "@/lib/auth";
+import { setAuthSession, type AuthUser } from "@/lib/auth-session";
 import { Button } from "@/components/ui/button";
 import {
   Card,

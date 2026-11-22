@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { Menu, Wrench, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { getAuthUser, type AuthUser } from "@/lib/auth";
+import { getAuthUser, type AuthUser } from "@/lib/auth-session";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [

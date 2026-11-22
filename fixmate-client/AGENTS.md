@@ -21,6 +21,11 @@ Next.js 14 App Router + TypeScript + Tailwind CSS + shadcn/ui + Sonner frontend 
 - `NEXT_PUBLIC_API_URL` — backend API base URL (default `http://localhost:5000`)
 - `NEXT_PUBLIC_IMGBB_API_KEY` — ImgBB API key for image uploads
 - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` — Stripe publishable key for checkout
+- `MONGODB_URI` — MongoDB connection string for Better Auth
+- `BETTER_AUTH_SECRET` — secret used to sign Better Auth sessions
+- `BETTER_AUTH_URL` — deployed app URL; included in Better Auth trusted origins (defaults to `http://localhost:3000` locally)
+
+Better Auth's built-in `image` user field is available alongside the custom `role`, `phone`, `area`, and `bio` fields.
 
 ## Notes
 
