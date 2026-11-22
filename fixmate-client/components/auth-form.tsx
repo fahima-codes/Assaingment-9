@@ -20,17 +20,39 @@ interface AuthFormProps {
   redirect?: string;
 }
 
+interface AuthFormErrors {
+  email?: string;
+  password?: string;
+}
+
 export function AuthForm({ mode, redirect }: AuthFormProps) {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<AuthFormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isSignIn = mode === "signin";
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (isSignIn) {
+      const validationErrors: AuthFormErrors = {};
+      if (!email.trim()) {
+        validationErrors.email = "Email is required.";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+        validationErrors.email = "Enter a valid email address.";
+      }
+      if (!password) {
+        validationErrors.password = "Password is required.";
+      }
+
+      setErrors(validationErrors);
+      if (Object.keys(validationErrors).length > 0) return;
+    }
+
     setIsSubmitting(true);
     try {
       const payload = isSignIn ? { email, password } : { name, email, password };
@@ -51,10 +73,18 @@ export function AuthForm({ mode, redirect }: AuthFormProps) {
         isSignIn ? "Signed in successfully!" : "Account created successfully!",
       );
 
-      const destination =
+      const safeRedirect =
         redirect && redirect.startsWith("/") && !redirect.startsWith("//")
           ? redirect
-          : "/";
+          : undefined;
+      const role = user?.role ?? "customer";
+      const dashboard =
+        role === "technician"
+          ? "/dashboard/technician"
+          : role === "admin"
+            ? "/dashboard/admin"
+            : "/dashboard/customer";
+      const destination = safeRedirect ?? (isSignIn ? dashboard : "/");
       router.push(destination);
     } catch (error) {
       const message = (error as { message?: string })?.message;
@@ -74,7 +104,7 @@ export function AuthForm({ mode, redirect }: AuthFormProps) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate={isSignIn}>
           {!isSignIn ? (
             <div className="space-y-1">
               <label htmlFor="auth-name" className="text-sm font-medium text-foreground">
@@ -99,11 +129,23 @@ export function AuthForm({ mode, redirect }: AuthFormProps) {
               id="auth-email"
               name="email"
               type="email"
-              required
+              required={!isSignIn}
               value={email}
-              onChange={(event) => setEmail(event.target.value)}
+              onChange={(event) => {
+                setEmail(event.target.value);
+                if (errors.email) {
+                  setErrors((current) => ({ ...current, email: undefined }));
+                }
+              }}
+              aria-invalid={Boolean(errors.email)}
+              aria-describedby={errors.email ? "auth-email-error" : undefined}
               className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
             />
+            {errors.email ? (
+              <p id="auth-email-error" className="text-sm text-destructive" role="alert">
+                {errors.email}
+              </p>
+            ) : null}
           </div>
 
           <div className="space-y-1">
@@ -114,15 +156,27 @@ export function AuthForm({ mode, redirect }: AuthFormProps) {
               id="auth-password"
               name="password"
               type="password"
-              required
-              minLength={6}
+              required={!isSignIn}
+              minLength={isSignIn ? undefined : 6}
               value={password}
-              onChange={(event) => setPassword(event.target.value)}
+              onChange={(event) => {
+                setPassword(event.target.value);
+                if (errors.password) {
+                  setErrors((current) => ({ ...current, password: undefined }));
+                }
+              }}
+              aria-invalid={Boolean(errors.password)}
+              aria-describedby={errors.password ? "auth-password-error" : undefined}
               className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
             />
+            {errors.password ? (
+              <p id="auth-password-error" className="text-sm text-destructive" role="alert">
+                {errors.password}
+              </p>
+            ) : null}
           </div>
 
-          <Button type="submit" className="w-full" disabled={isSubmitting || !email || !password}>
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? "Please wait..." : isSignIn ? "Sign In" : "Create Account"}
           </Button>
         </form>
