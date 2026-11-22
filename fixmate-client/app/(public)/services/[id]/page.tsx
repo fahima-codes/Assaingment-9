@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { api } from "@/lib/api";
-import { ApiError } from "@/lib/api";
+import { ApiError, api } from "@/lib/api";
 import { toServiceCardData, type Service } from "@/lib/services";
 
 import { Button } from "@/components/ui/button";
@@ -23,6 +22,10 @@ interface ServiceDetailPageProps {
 export default async function ServiceDetailPage({
   params,
 }: ServiceDetailPageProps) {
+  if (!/^[a-f\d]{24}$/i.test(params.id)) {
+    notFound();
+  }
+
   let service: Service;
   try {
     service = await api.get<Service>(
@@ -36,7 +39,12 @@ export default async function ServiceDetailPage({
     throw error;
   }
 
+  if (service.approvalStatus !== "approved" || service.isAvailable !== true) {
+    notFound();
+  }
+
   const data = toServiceCardData(service);
+  const serviceImage = data.image || "/hero-repair.svg";
 
   const technicianInitials = (data.technicianName ?? "")
     .split(" ")
@@ -53,16 +61,12 @@ export default async function ServiceDetailPage({
       </Button>
 
       <Card className="mt-6 overflow-hidden">
-        {data.image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={data.image}
-            alt={data.title}
-            className="h-72 w-full object-cover sm:h-96"
-          />
-        ) : (
-          <div className="h-72 w-full bg-secondary sm:h-96" aria-hidden="true" />
-        )}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={serviceImage}
+          alt={data.title}
+          className="h-72 w-full object-cover sm:h-96"
+        />
 
         <CardHeader className="space-y-3">
           <CardTitle className="text-2xl">{data.title}</CardTitle>
@@ -74,7 +78,9 @@ export default async function ServiceDetailPage({
         </CardHeader>
 
         <CardContent className="space-y-6">
-          <p className="text-muted-foreground">{data.description}</p>
+          <p className="text-muted-foreground">
+            {data.description || "No description provided."}
+          </p>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="rounded-xl border p-4">
@@ -87,7 +93,7 @@ export default async function ServiceDetailPage({
             </div>
             <div className="rounded-xl border p-4">
               <p className="text-xs uppercase tracking-wide text-muted-foreground">
-                Duration
+                Estimated Duration
               </p>
               <p className="mt-1 text-xl font-semibold text-foreground">
                 {data.duration ?? "To be discussed"}
