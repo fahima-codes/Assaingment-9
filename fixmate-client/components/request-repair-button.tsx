@@ -228,13 +228,13 @@ export function RequestRepairButton({
               </div>
               <div className="space-y-1">
                 <label
-                  htmlFor="request-problem"
+                  htmlFor="request-problem-description"
                   className="text-sm font-medium text-foreground"
                 >
-                  Problem
+                  Problem Description
                 </label>
                 <textarea
-                  id="request-problem"
+                  id="request-problem-description"
                   required
                   minLength={20}
                   value={problem}
@@ -243,7 +243,7 @@ export function RequestRepairButton({
                   className="min-h-24 w-full rounded-md border border-input px-3 py-2 text-sm"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Minimum 20 characters required.
+                  Describe the issue in at least 20 characters.
                 </p>
               </div>
               <div className="flex justify-end gap-2">
