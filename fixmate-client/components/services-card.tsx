@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Wrench } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,21 +25,16 @@ export function ServiceCard({ service }: { service: ServiceCardData }) {
   const { title, description, image, category, serviceMode, serviceArea, price, technicianName } =
     service;
   const detailsHref = service.id ? `/services/${service.id}` : "/services";
+  const serviceImage = image || "/hero-repair.svg";
 
   return (
     <Card className="flex h-full flex-col overflow-hidden">
-      {image ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={image}
-          alt={title}
-          className="h-44 w-full object-cover"
-        />
-      ) : (
-        <div className="flex h-44 w-full items-center justify-center bg-secondary">
-          <Wrench className="h-10 w-10 text-muted-foreground" />
-        </div>
-      )}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={serviceImage}
+        alt={title}
+        className="h-44 w-full object-cover"
+      />
 
       <CardHeader>
         <CardTitle className="text-lg leading-snug">{title}</CardTitle>

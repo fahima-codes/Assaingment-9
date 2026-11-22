@@ -28,7 +28,7 @@ export function FeaturedServices({ services }: FeaturedServicesProps) {
         </div>
 
         {services.length > 0 ? (
-          <div className="mt-8 grid items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+          <div className="mt-8 grid auto-rows-fr items-stretch gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {services.map((service) => (
               <ServiceCard
                 key={service.id ?? service.title}
