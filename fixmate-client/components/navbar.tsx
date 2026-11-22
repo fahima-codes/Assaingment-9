@@ -8,6 +8,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
+  AUTH_SESSION_CHANGE_EVENT,
   clearAuthSession,
   getAuthToken,
   getAuthUser,
@@ -38,9 +39,17 @@ export function Navbar() {
   const [authReady, setAuthReady] = useState(false);
 
   useEffect(() => {
-    setUser(getAuthToken() ? getAuthUser() : null);
+    const syncUser = () => setUser(getAuthToken() ? getAuthUser() : null);
+    syncUser();
     setAuthReady(true);
     setMobileOpen(false);
+
+    window.addEventListener(AUTH_SESSION_CHANGE_EVENT, syncUser);
+    window.addEventListener("storage", syncUser);
+    return () => {
+      window.removeEventListener(AUTH_SESSION_CHANGE_EVENT, syncUser);
+      window.removeEventListener("storage", syncUser);
+    };
   }, [pathname]);
 
   const role = isAuthRole(user?.role) ? user.role : "customer";
@@ -126,7 +135,7 @@ export function Navbar() {
                   Dashboard
                 </Link>
                 <Link
-                  href="/profile"
+                  href="/dashboard/profile"
                   className="block rounded-md px-3 py-2 text-sm hover:bg-accent"
                 >
                   Update Profile
@@ -227,7 +236,7 @@ export function Navbar() {
                     Dashboard
                   </Link>
                   <Link
-                    href="/profile"
+                    href="/dashboard/profile"
                     onClick={() => setMobileOpen(false)}
                     className="rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
                   >

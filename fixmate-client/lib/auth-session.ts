@@ -11,6 +11,8 @@ export interface AuthUser {
   role?: AuthRole;
 }
 
+export const AUTH_SESSION_CHANGE_EVENT = "fixmate:auth-session-change";
+
 export function isAuthRole(role: unknown): role is AuthRole {
   return role === "customer" || role === "technician" || role === "admin";
 }
@@ -63,6 +65,7 @@ export function setAuthSession(
   } catch {
     // localStorage unavailable -> ignore
   }
+  window.dispatchEvent(new Event(AUTH_SESSION_CHANGE_EVENT));
 }
 
 export function clearAuthSession() {

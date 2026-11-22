@@ -1,9 +1,11 @@
 "use client";
 
-import Link from "next/link";
+import { Camera, ShieldCheck, UserRound } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { DashboardLayout } from "@/components/dashboard-layout";
+import { DashboardStatCard } from "@/components/dashboard-stat-card";
 import {
   getAuthToken,
   getAuthUser,
@@ -48,31 +50,67 @@ export function ProtectedDashboard({ role }: ProtectedDashboardProps) {
     setIsAuthorized(true);
   }, [role, router]);
 
+  if (!isAuthorized || !user) {
+    return (
+      <main className="px-4 py-12" role="status">
+        <p className="text-sm text-muted-foreground">Checking your account...</p>
+      </main>
+    );
+  }
+
+  const profileFields = [
+    user.name,
+    user.email,
+    user.phone,
+    user.area,
+    user.bio,
+    user.image,
+  ];
+  const profileCompletion = Math.round(
+    (profileFields.filter((field) => Boolean(field?.trim())).length /
+      profileFields.length) *
+      100,
+  );
+
   return (
-    <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-12 sm:px-6 lg:px-8">
-      {isAuthorized && user ? (
-        <section className="rounded-xl border border-border bg-card p-6 shadow-sm sm:p-8">
-          <p className="text-sm font-medium text-primary">
+    <DashboardLayout role={role} user={user}>
+      <div className="space-y-8">
+        <section>
+          <p className="text-sm font-semibold text-primary">
             {ROLE_LABELS[role]} dashboard
           </p>
-          <h1 className="mt-2 text-3xl font-bold tracking-tight">
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">
             Welcome, {user.name?.trim() || user.email || "there"}
           </h1>
           <p className="mt-2 text-muted-foreground">
-            Your FixMate account dashboard.
+            Here&apos;s a quick overview of your FixMate account.
           </p>
-          <Link
-            href="/profile"
-            className="mt-6 inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-          >
-            Update Profile
-          </Link>
         </section>
-      ) : (
-        <p className="text-sm text-muted-foreground" role="status">
-          Checking your account...
-        </p>
-      )}
-    </main>
+
+        <section
+          aria-label="Account stats"
+          className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+        >
+          <DashboardStatCard
+            icon={ShieldCheck}
+            label="Account Role"
+            value={ROLE_LABELS[role]}
+            description="Your FixMate access level."
+          />
+          <DashboardStatCard
+            icon={UserRound}
+            label="Profile Completion"
+            value={`${profileCompletion}%`}
+            description="Add profile details to help others recognize you."
+          />
+          <DashboardStatCard
+            icon={Camera}
+            label="Profile Photo"
+            value={user.image ? "Added" : "Not added"}
+            description="A profile photo makes your account easier to recognize."
+          />
+        </section>
+      </div>
+    </DashboardLayout>
   );
 }
