@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { ApiError, api } from "@/lib/api";
-import { getAuthUser } from "@/lib/auth-session";
+import { getAuthToken, getAuthUser } from "@/lib/auth-session";
 import { Button } from "@/components/ui/button";
 
 interface RequestRepairButtonProps {
@@ -37,7 +37,7 @@ export function RequestRepairButton({
   const [problem, setProblem] = useState("");
 
   useEffect(() => {
-    setUser(getAuthUser());
+    setUser(getAuthToken() ? getAuthUser() : null);
     setIsCheckingAuth(false);
   }, []);
 
@@ -46,7 +46,7 @@ export function RequestRepairButton({
   const handleRequestClick = () => {
     if (isCheckingAuth) return;
 
-    if (!user) {
+    if (!getAuthToken() || !user) {
       router.push(
         `/sign-in?redirect=${encodeURIComponent(`/services/${serviceId}`)}`,
       );
@@ -64,7 +64,7 @@ export function RequestRepairButton({
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!user) {
+    if (!getAuthToken() || !user) {
       setIsModalOpen(false);
       router.push(`/sign-in?redirect=${encodeURIComponent(`/services/${serviceId}`)}`);
       return;
@@ -121,7 +121,9 @@ export function RequestRepairButton({
         onClick={handleRequestClick}
         disabled={Boolean(user && !isCustomer)}
       >
-        {user && !isCustomer ? "Only customers can request" : "Request Repair"}
+        {user && !isCustomer
+          ? "Only customers can request a repair"
+          : "Request Repair"}
       </Button>
 
       {isModalOpen && !isSubmitted ? (
