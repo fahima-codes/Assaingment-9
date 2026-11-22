@@ -43,7 +43,11 @@ const ROLE_NAV_ITEMS: Record<AuthRole, DashboardNavItem[]> = {
   customer: [
     { label: "Overview", href: "/dashboard/customer", icon: LayoutDashboard },
     { label: "Find Services", href: "/services", icon: Search },
-    { label: "My Bookings", href: "/bookings", icon: CalendarDays },
+    {
+      label: "My Bookings",
+      href: "/dashboard/customer/bookings",
+      icon: CalendarDays,
+    },
     { label: "Profile", href: "/dashboard/profile", icon: UserRound },
   ],
   technician: [
@@ -166,7 +170,9 @@ export function DashboardLayout({
             const isActive =
               item.href === "/services"
                 ? pathname.startsWith("/services")
-                : pathname === item.href;
+                : pathname === item.href ||
+                  (item.href !== "/dashboard/customer" &&
+                    pathname.startsWith(`${item.href}/`));
 
             return (
               <Link

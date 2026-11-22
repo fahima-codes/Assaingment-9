@@ -1,11 +1,20 @@
 "use client";
 
-import { Camera, ShieldCheck, UserRound } from "lucide-react";
+import {
+  BriefcaseBusiness,
+  CalendarDays,
+  Camera,
+  CheckCircle2,
+  ShieldCheck,
+  UserRound,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 import { DashboardLayout } from "@/components/dashboard-layout";
 import { DashboardStatCard } from "@/components/dashboard-stat-card";
+import { api } from "@/lib/api";
 import {
   getAuthToken,
   getAuthUser,
@@ -25,10 +34,18 @@ interface ProtectedDashboardProps {
   role: AuthRole;
 }
 
+interface CustomerBookingSummary {
+  status?: string;
+}
+
 export function ProtectedDashboard({ role }: ProtectedDashboardProps) {
   const router = useRouter();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [customerBookings, setCustomerBookings] = useState<
+    CustomerBookingSummary[] | null
+  >(null);
+  const [isLoadingBookings, setIsLoadingBookings] = useState(false);
 
   useEffect(() => {
     const token = getAuthToken();
@@ -49,6 +66,38 @@ export function ProtectedDashboard({ role }: ProtectedDashboardProps) {
     setUser(currentUser);
     setIsAuthorized(true);
   }, [role, router]);
+
+  useEffect(() => {
+    if (!isAuthorized || role !== "customer") return;
+
+    let isActive = true;
+    setIsLoadingBookings(true);
+
+    const loadBookings = async () => {
+      try {
+        const response = await api.get<
+          CustomerBookingSummary[] | { bookings?: CustomerBookingSummary[] }
+        >("/api/bookings/my", { cache: "no-store" });
+        const bookings = Array.isArray(response)
+          ? response
+          : (response?.bookings ?? []);
+        if (isActive) setCustomerBookings(bookings);
+      } catch (error) {
+        if (isActive) {
+          toast.error(
+            error instanceof Error ? error.message : "Could not load booking stats.",
+          );
+        }
+      } finally {
+        if (isActive) setIsLoadingBookings(false);
+      }
+    };
+
+    void loadBookings();
+    return () => {
+      isActive = false;
+    };
+  }, [isAuthorized, role]);
 
   if (!isAuthorized || !user) {
     return (
@@ -87,29 +136,83 @@ export function ProtectedDashboard({ role }: ProtectedDashboardProps) {
           </p>
         </section>
 
-        <section
-          aria-label="Account stats"
-          className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
-        >
-          <DashboardStatCard
-            icon={ShieldCheck}
-            label="Account Role"
-            value={ROLE_LABELS[role]}
-            description="Your FixMate access level."
-          />
-          <DashboardStatCard
-            icon={UserRound}
-            label="Profile Completion"
-            value={`${profileCompletion}%`}
-            description="Add profile details to help others recognize you."
-          />
-          <DashboardStatCard
-            icon={Camera}
-            label="Profile Photo"
-            value={user.image ? "Added" : "Not added"}
-            description="A profile photo makes your account easier to recognize."
-          />
-        </section>
+        {role === "customer" ? (
+          <section
+            aria-label="Customer booking stats"
+            className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            <DashboardStatCard
+              icon={CalendarDays}
+              label="Total Requests"
+              value={
+                isLoadingBookings
+                  ? "..."
+                  : customerBookings
+                    ? String(customerBookings.length)
+                    : "—"
+              }
+              description="All repair requests in your account."
+            />
+            <DashboardStatCard
+              icon={BriefcaseBusiness}
+              label="Active Jobs"
+              value={
+                isLoadingBookings
+                  ? "..."
+                  : customerBookings
+                    ? String(
+                        customerBookings.filter(
+                          (booking) =>
+                            booking.status === "accepted" ||
+                            booking.status === "in-progress",
+                        ).length,
+                      )
+                    : "—"
+              }
+              description="Requests accepted or currently in progress."
+            />
+            <DashboardStatCard
+              icon={CheckCircle2}
+              label="Completed Jobs"
+              value={
+                isLoadingBookings
+                  ? "..."
+                  : customerBookings
+                    ? String(
+                        customerBookings.filter(
+                          (booking) => booking.status === "completed",
+                        ).length,
+                      )
+                    : "—"
+              }
+              description="Repairs completed by your technicians."
+            />
+          </section>
+        ) : (
+          <section
+            aria-label="Account stats"
+            className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            <DashboardStatCard
+              icon={ShieldCheck}
+              label="Account Role"
+              value={ROLE_LABELS[role]}
+              description="Your FixMate access level."
+            />
+            <DashboardStatCard
+              icon={UserRound}
+              label="Profile Completion"
+              value={`${profileCompletion}%`}
+              description="Add profile details to help others recognize you."
+            />
+            <DashboardStatCard
+              icon={Camera}
+              label="Profile Photo"
+              value={user.image ? "Added" : "Not added"}
+              description="A profile photo makes your account easier to recognize."
+            />
+          </section>
+        )}
       </div>
     </DashboardLayout>
   );

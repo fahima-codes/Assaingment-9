@@ -67,7 +67,12 @@ export function Navbar() {
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   const navLinks = user
-    ? [...NAV_LINKS, { href: "/bookings", label: "My Bookings" }]
+    ? [
+        ...NAV_LINKS,
+        ...(role === "customer"
+          ? [{ href: "/dashboard/customer/bookings", label: "My Bookings" }]
+          : []),
+      ]
     : NAV_LINKS;
 
   return (
