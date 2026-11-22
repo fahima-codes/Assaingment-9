@@ -42,7 +42,7 @@ export function HowItWorks() {
             return (
               <li
                 key={step.title}
-                className="relative rounded-xl border bg-card p-6 shadow-sm"
+                className="relative flex h-full flex-col rounded-xl border bg-card p-6 shadow-sm"
               >
                 <span className="absolute right-6 top-6 text-3xl font-bold text-muted">
                   {index + 1}

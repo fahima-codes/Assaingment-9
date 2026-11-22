@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { api } from "@/lib/api";
+import { ApiError } from "@/lib/api";
 import { toServiceCardData, type Service } from "@/lib/services";
 
 import { Button } from "@/components/ui/button";
@@ -22,22 +23,20 @@ interface ServiceDetailPageProps {
 export default async function ServiceDetailPage({
   params,
 }: ServiceDetailPageProps) {
-  let service: Service | null = null;
-
+  let service: Service;
   try {
     service = await api.get<Service>(
       `/api/services/${params.id}`,
       { cache: "no-store" },
     );
-  } catch {
-    service = null;
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) {
+      notFound();
+    }
+    throw error;
   }
 
-  const data = service ? toServiceCardData(service) : null;
-
-  if (!data) {
-    notFound();
-  }
+  const data = toServiceCardData(service);
 
   const technicianInitials = (data.technicianName ?? "")
     .split(" ")
@@ -59,9 +58,11 @@ export default async function ServiceDetailPage({
           <img
             src={data.image}
             alt={data.title}
-            className="h-72 w-full object-cover"
+            className="h-72 w-full object-cover sm:h-96"
           />
-        ) : null}
+        ) : (
+          <div className="h-72 w-full bg-secondary sm:h-96" aria-hidden="true" />
+        )}
 
         <CardHeader className="space-y-3">
           <CardTitle className="text-2xl">{data.title}</CardTitle>
@@ -121,7 +122,7 @@ export default async function ServiceDetailPage({
                   className="h-11 w-11 rounded-full object-cover"
                 />
               ) : (
-                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#F97316] text-sm font-bold text-white">
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">
                   {technicianInitials || "TF"}
                 </span>
               )}

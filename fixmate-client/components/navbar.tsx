@@ -48,11 +48,12 @@ export function Navbar() {
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
+              aria-current={isActive(link.href) ? "page" : undefined}
               className={cn(
                 "text-sm font-medium transition-colors",
                 isActive(link.href)
@@ -84,8 +85,11 @@ export function Navbar() {
             variant="ghost"
             size="icon"
             className="md:hidden"
+            type="button"
             onClick={() => setMobileOpen((open) => !open)}
-            aria-label="Toggle navigation menu"
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-navigation"
+            aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
           >
             {mobileOpen ? (
               <X className="h-5 w-5" />
@@ -96,13 +100,20 @@ export function Navbar() {
         </div>
       </div>
 
-      {mobileOpen && (
-        <div className="border-t border-border bg-white md:hidden">
+      <div
+        id="mobile-navigation"
+        className={cn(
+          "border-t border-border bg-white md:hidden",
+          !mobileOpen && "hidden"
+        )}
+      >
           <nav className="flex flex-col gap-1 px-4 py-4">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
+                onClick={() => setMobileOpen(false)}
+                aria-current={isActive(link.href) ? "page" : undefined}
                 className={cn(
                   "rounded-md px-3 py-2 text-sm font-medium",
                   isActive(link.href)
@@ -130,8 +141,7 @@ export function Navbar() {
               )}
             </div>
           </nav>
-        </div>
-      )}
+      </div>
     </header>
   );
 }

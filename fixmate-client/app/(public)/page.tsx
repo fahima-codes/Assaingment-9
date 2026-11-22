@@ -1,6 +1,5 @@
 import { api } from "@/lib/api";
 import {
-  FALLBACK_SERVICES,
   toServiceCardData,
   type ServiceCardData,
   type ServiceListResponse,
@@ -15,20 +14,13 @@ import { WhyChooseUs } from "@/components/why-choose-us";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  let featuredServices: ServiceCardData[] = FALLBACK_SERVICES;
-
-  try {
-    const response = await api.get<ServiceListResponse>(
-      "/api/services?page=1&limit=6&sort=newest",
-      { cache: "no-store" },
-    );
-
-    featuredServices = (response?.services ?? [])
-      .slice(0, 6)
-      .map(toServiceCardData);
-  } catch {
-    featuredServices = FALLBACK_SERVICES;
-  }
+  const response = await api.get<ServiceListResponse>(
+    "/api/services?page=1&limit=6&sort=newest&approvalStatus=approved&isAvailable=true",
+    { cache: "no-store" },
+  );
+  const featuredServices: ServiceCardData[] = (response?.services ?? [])
+    .slice(0, 6)
+    .map(toServiceCardData);
 
   return (
     <>

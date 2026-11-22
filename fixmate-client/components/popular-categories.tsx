@@ -53,9 +53,9 @@ export function PopularCategories() {
               <Link
                 key={category.slug}
                 href={`/services?category=${category.slug}`}
-                className="group rounded-xl border bg-card p-6 shadow-sm transition-colors hover:border-[#F97316] hover:shadow-md"
+                className="group flex h-full flex-col rounded-xl border bg-card p-6 shadow-sm transition-colors hover:border-primary hover:shadow-md"
               >
-                <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent text-[#F97316]">
+                <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-accent text-primary">
                   <Icon className="h-6 w-6" />
                 </span>
                 <p className="mt-4 font-medium text-foreground">

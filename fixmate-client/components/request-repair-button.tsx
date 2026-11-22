@@ -1,25 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { api } from "@/lib/api";
+import { ApiError, api } from "@/lib/api";
+import { getAuthUser } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
-
-interface AuthUser {
-  name?: string;
-  email?: string;
-  phone?: string;
-  address?: string;
-  area?: string;
-  role?: string;
-}
 
 interface RequestRepairButtonProps {
   serviceId: string;
   serviceTitle: string;
+}
+
+function getLocalDate() {
+  const date = new Date();
+  date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+  return date.toISOString().slice(0, 10);
 }
 
 export function RequestRepairButton({
@@ -27,7 +25,7 @@ export function RequestRepairButton({
   serviceTitle,
 }: RequestRepairButtonProps) {
   const router = useRouter();
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [user, setUser] = useState<ReturnType<typeof getAuthUser>>(null);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,19 +37,11 @@ export function RequestRepairButton({
   const [problem, setProblem] = useState("");
 
   useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem("fixmate_user");
-      if (raw) {
-        setUser(JSON.parse(raw) as AuthUser);
-      }
-    } catch {
-      setUser(null);
-    } finally {
-      setIsCheckingAuth(false);
-    }
+    setUser(getAuthUser());
+    setIsCheckingAuth(false);
   }, []);
 
-  const isTechnicianOrAdmin = user?.role === "technician" || user?.role === "admin";
+  const isCustomer = user?.role === "customer";
 
   const handleRequestClick = () => {
     if (isCheckingAuth) return;
@@ -63,27 +53,25 @@ export function RequestRepairButton({
       return;
     }
 
-    if (isTechnicianOrAdmin) {
-      toast.info("Only customers can request a repair.");
-      return;
-    }
+    if (!isCustomer) return;
 
     setPhone(user.phone ?? "");
     setAddress(user.address ?? user.area ?? "");
-    setPreferredDate(new Date().toISOString().slice(0, 10));
+    setPreferredDate(getLocalDate());
     setProblem("");
     setIsModalOpen(true);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (!user) {
       setIsModalOpen(false);
       router.push(`/sign-in?redirect=${encodeURIComponent(`/services/${serviceId}`)}`);
       return;
     }
 
-    if (problem.trim().length < 20) {
-      toast.error("Please describe the problem in at least 20 characters.");
+    if (problem.trim().length < 20 || preferredDate < getLocalDate()) {
+      toast.error("Enter a future date and describe the problem in at least 20 characters.");
       return;
     }
 
@@ -91,23 +79,32 @@ export function RequestRepairButton({
     try {
       await api.post<{ message?: string }>("/api/bookings", {
         serviceId,
+        name: user.name,
+        email: user.email,
+        phone: phone.trim(),
+        address: address.trim(),
+        preferredDate,
+        problem: problem.trim(),
       });
       toast.success("Your repair request has been sent successfully!");
       setIsModalOpen(false);
       setIsSubmitted(true);
     } catch (error) {
-      const status = (error as { status?: number })?.status;
-      if (status === 400) {
+      const message = error instanceof Error ? error.message : "";
+      if (
+        (error instanceof ApiError && error.status === 409) ||
+        /already|duplicate|active request/i.test(message)
+      ) {
         toast.error("You already have an active request");
       } else {
-        toast.error("Failed to send the repair request. Please try again.");
+        toast.error(message || "Failed to send the repair request. Please try again.");
       }
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getLocalDate();
 
   if (isCheckingAuth) {
     return (
@@ -122,16 +119,21 @@ export function RequestRepairButton({
       <Button
         size="lg"
         onClick={handleRequestClick}
-        disabled={isTechnicianOrAdmin}
+        disabled={Boolean(user && !isCustomer)}
       >
-        {isTechnicianOrAdmin ? "Only customers can request" : "Request Repair"}
+        {user && !isCustomer ? "Only customers can request" : "Request Repair"}
       </Button>
 
       {isModalOpen && !isSubmitted ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
-          <div className="w-full max-w-lg rounded-xl bg-card p-6 shadow-lg">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 px-4 py-8">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="request-repair-title"
+            className="w-full max-w-lg rounded-xl bg-card p-6 shadow-lg"
+          >
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-foreground">
+              <h3 id="request-repair-title" className="text-lg font-semibold text-foreground">
                 Request Repair
               </h3>
               <button
@@ -145,7 +147,7 @@ export function RequestRepairButton({
             </div>
             <p className="mt-1 text-sm text-muted-foreground">{serviceTitle}</p>
 
-            <div className="mt-4 space-y-4">
+            <form onSubmit={handleSubmit} className="mt-4 space-y-4">
               <div className="space-y-1">
                 <label
                   htmlFor="request-name"
@@ -183,6 +185,8 @@ export function RequestRepairButton({
                 </label>
                 <input
                   id="request-phone"
+                  type="tel"
+                  required
                   value={phone}
                   onChange={(event) => setPhone(event.target.value)}
                   className="h-10 w-full rounded-md border border-input px-3 text-sm"
@@ -197,6 +201,7 @@ export function RequestRepairButton({
                 </label>
                 <input
                   id="request-address"
+                  required
                   value={address}
                   onChange={(event) => setAddress(event.target.value)}
                   className="h-10 w-full rounded-md border border-input px-3 text-sm"
@@ -213,6 +218,7 @@ export function RequestRepairButton({
                   id="request-date"
                   type="date"
                   min={today}
+                  required
                   value={preferredDate}
                   onChange={(event) => setPreferredDate(event.target.value)}
                   className="h-10 w-full rounded-md border border-input px-3 text-sm"
@@ -227,6 +233,8 @@ export function RequestRepairButton({
                 </label>
                 <textarea
                   id="request-problem"
+                  required
+                  minLength={20}
                   value={problem}
                   onChange={(event) => setProblem(event.target.value)}
                   placeholder="Describe the problem in at least 20 characters..."
@@ -236,19 +244,18 @@ export function RequestRepairButton({
                   Minimum 20 characters required.
                 </p>
               </div>
-            </div>
-
-            <div className="mt-6 flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+              <div className="flex justify-end gap-2">
+              <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>
                 Cancel
               </Button>
               <Button
-                onClick={handleSubmit}
+                type="submit"
                 disabled={isSubmitting || problem.trim().length < 20}
               >
                 {isSubmitting ? "Sending..." : "Submit Request"}
               </Button>
             </div>
+            </form>
           </div>
         </div>
       ) : null}

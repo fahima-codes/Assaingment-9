@@ -40,10 +40,10 @@ export function WhyChooseUs() {
           after the repair is complete.
         </p>
 
-        <div className="mt-8 grid gap-6 rounded-2xl bg-[#0F172A] p-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid gap-6 rounded-2xl bg-foreground p-8 sm:grid-cols-2 lg:grid-cols-4">
           {STATS.map((stat) => (
             <div key={stat.label} className="text-center">
-              <p className="text-3xl font-bold text-[#F97316]">{stat.value}</p>
+              <p className="text-3xl font-bold text-primary">{stat.value}</p>
               <p className="mt-1 text-sm text-white/70">{stat.label}</p>
             </div>
           ))}
@@ -53,7 +53,7 @@ export function WhyChooseUs() {
           {TESTIMONIALS.map((testimonial) => (
             <div
               key={testimonial.name}
-              className="rounded-xl border bg-card p-6 shadow-sm"
+              className="flex h-full flex-col rounded-xl border bg-card p-6 shadow-sm"
             >
               <div className="flex items-center gap-1">
                 {Array.from({ length: 5 }).map((_, index) => (
@@ -61,13 +61,13 @@ export function WhyChooseUs() {
                     key={index}
                     className={`h-4 w-4 ${
                       index < testimonial.rating
-                        ? "fill-[#F97316] text-[#F97316]"
+                        ? "fill-primary text-primary"
                         : "text-muted"
                     }`}
                   />
                 ))}
               </div>
-              <p className="mt-4 text-sm text-muted-foreground">
+              <p className="mt-4 flex-1 text-sm text-muted-foreground">
                 &ldquo;{testimonial.quote}&rdquo;
               </p>
               <p className="mt-4 text-sm font-semibold text-foreground">

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 export function Hero() {
   return (
-    <section className="bg-[#0F172A] text-white">
+    <section className="bg-foreground text-white">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
@@ -25,7 +25,7 @@ export function Hero() {
                 name="search"
                 type="text"
                 placeholder="What needs fixing? e.g. leaking pipe, AC not cooling"
-                className="h-12 w-full rounded-md border border-white/20 bg-white/10 px-4 text-sm text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-[#F97316]"
+                className="h-12 w-full rounded-md border border-white/20 bg-white/10 px-4 text-sm text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-primary"
               />
               <Button type="submit" size="lg">
                 Search

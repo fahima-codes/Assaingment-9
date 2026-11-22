@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { api } from "@/lib/api";
 import {
-  FALLBACK_SERVICES,
   SERVICE_CATEGORIES,
   SERVICE_MODES,
   toServiceCardData,
@@ -37,27 +36,19 @@ export default async function ServicesPage({
   const category = searchParams?.category;
   const serviceMode = searchParams?.serviceMode;
   const sort = searchParams?.sort;
+  const params = new URLSearchParams({ page: "1", limit: "12" });
+  if (search) params.set("search", search);
+  if (category) params.set("category", category);
+  if (serviceMode) params.set("serviceMode", serviceMode);
+  if (sort) params.set("sort", sort);
 
-  let services: ServiceCardData[] = FALLBACK_SERVICES;
-
-  try {
-    const params = new URLSearchParams();
-    if (search) params.set("search", search);
-    if (category) params.set("category", category);
-    if (serviceMode) params.set("serviceMode", serviceMode);
-    if (sort) params.set("sort", sort);
-
-    const query = params.toString();
-
-    const response = await api.get<ServiceListResponse>(
-      `/api/services?page=1&limit=12${query ? `?${query}` : ""}`,
-      { cache: "no-store" },
-    );
-
-    services = (response?.services ?? []).map(toServiceCardData);
-  } catch {
-    services = FALLBACK_SERVICES;
-  }
+  const response = await api.get<ServiceListResponse>(
+    `/api/services?${params.toString()}`,
+    { cache: "no-store" },
+  );
+  const services: ServiceCardData[] = (response?.services ?? []).map(
+    toServiceCardData,
+  );
 
   const isFiltered =
     Boolean(search) || Boolean(category) || Boolean(serviceMode) || Boolean(sort);
@@ -138,7 +129,7 @@ export default async function ServicesPage({
       </Card>
 
       {services.length > 0 ? (
-        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {services.map((service) => (
             <ServiceCard key={service.id ?? service.title} service={service} />
           ))}
