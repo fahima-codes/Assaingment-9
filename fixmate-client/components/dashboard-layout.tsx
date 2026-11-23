@@ -2,10 +2,13 @@
 
 import {
   CalendarDays,
+  ClipboardList,
+  CreditCard,
   Home,
   LayoutDashboard,
   LogOut,
   Menu,
+  Plus,
   Search,
   ShieldCheck,
   UserRound,
@@ -48,10 +51,25 @@ const ROLE_NAV_ITEMS: Record<AuthRole, DashboardNavItem[]> = {
       href: "/dashboard/customer/bookings",
       icon: CalendarDays,
     },
+    {
+      label: "Payments",
+      href: "/dashboard/customer/payments",
+      icon: CreditCard,
+    },
     { label: "Profile", href: "/dashboard/profile", icon: UserRound },
   ],
   technician: [
     { label: "Overview", href: "/dashboard/technician", icon: LayoutDashboard },
+    {
+      label: "My Services",
+      href: "/dashboard/technician/my-services",
+      icon: ClipboardList,
+    },
+    {
+      label: "Add Service",
+      href: "/dashboard/technician/add-service",
+      icon: Plus,
+    },
     { label: "Service Catalog", href: "/services", icon: Wrench },
     { label: "Profile", href: "/dashboard/profile", icon: UserRound },
   ],
@@ -167,11 +185,12 @@ export function DashboardLayout({
         <nav aria-label={`${ROLE_LABELS[role]} dashboard`} className="flex-1 space-y-1 px-3 py-5">
           {ROLE_NAV_ITEMS[role].map((item) => {
             const Icon = item.icon;
+            const isOverview = item.href === `/dashboard/${role}`;
             const isActive =
               item.href === "/services"
                 ? pathname.startsWith("/services")
                 : pathname === item.href ||
-                  (item.href !== "/dashboard/customer" &&
+                  (!isOverview &&
                     pathname.startsWith(`${item.href}/`));
 
             return (

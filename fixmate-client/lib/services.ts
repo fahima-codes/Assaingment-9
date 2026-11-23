@@ -50,7 +50,7 @@ export function toServiceCardData(service: Service): ServiceCardData {
     image: service.serviceImage,
     category: service.category,
     serviceMode: service.serviceMode,
-    serviceArea: service.serviceArea,
+    serviceArea: service.serviceArea ?? service.technicianArea,
     duration: service.duration,
     price: service.price,
     technicianName: service.technicianName,
