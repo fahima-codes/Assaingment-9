@@ -116,9 +116,18 @@ export function Navbar() {
                 aria-label="Open account menu"
                 className="flex cursor-pointer list-none items-center gap-2 rounded-full p-1 pr-3 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
-                  {displayName.charAt(0).toUpperCase()}
-                </span>
+                {user.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={user.image}
+                    alt={displayName}
+                    className="h-9 w-9 rounded-full border border-border object-cover"
+                  />
+                ) : (
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+                    {displayName.charAt(0).toUpperCase()}
+                  </span>
+                )}
                 <span className="max-w-32 truncate text-sm font-medium">
                   {displayName}
                 </span>

@@ -9,10 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@better-auth/mongo-adapter": "^1.7.27",
     "@radix-ui/react-slot": "^1.1.0",
+    "better-auth": "^1.7.27",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^1.77.0",
+    "mongodb": "^7.9.1",
     "next": "^14.2.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

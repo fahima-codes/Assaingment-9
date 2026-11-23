@@ -2,15 +2,10 @@ import { mongodbAdapter } from "@better-auth/mongo-adapter";
 import { betterAuth } from "better-auth";
 import { MongoClient } from "mongodb";
 
-const mongoUri = process.env.MONGODB_URI;
-if (!mongoUri) {
-  throw new Error("MONGODB_URI must be set to use Better Auth.");
-}
-
-const secret = process.env.BETTER_AUTH_SECRET;
-if (!secret) {
-  throw new Error("BETTER_AUTH_SECRET must be set to use Better Auth.");
-}
+const mongoUri =
+  process.env.MONGODB_URI || "mongodb://localhost:27017/fixmate";
+const secret =
+  process.env.BETTER_AUTH_SECRET || "fixmate_fallback_secret_key_12345";
 
 const baseURL = process.env.BETTER_AUTH_URL ?? process.env.NEXT_PUBLIC_APP_URL;
 const trustedOrigins = new Set(["http://localhost:3000"]);

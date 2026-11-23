@@ -12,6 +12,7 @@ import {
   Search,
   ShieldCheck,
   UserRound,
+  Users,
   Wrench,
   X,
 } from "lucide-react";
@@ -61,6 +62,11 @@ const ROLE_NAV_ITEMS: Record<AuthRole, DashboardNavItem[]> = {
   technician: [
     { label: "Overview", href: "/dashboard/technician", icon: LayoutDashboard },
     {
+      label: "Manage Requests",
+      href: "/dashboard/technician/requests",
+      icon: CalendarDays,
+    },
+    {
       label: "My Services",
       href: "/dashboard/technician/my-services",
       icon: ClipboardList,
@@ -75,7 +81,22 @@ const ROLE_NAV_ITEMS: Record<AuthRole, DashboardNavItem[]> = {
   ],
   admin: [
     { label: "Overview", href: "/dashboard/admin", icon: LayoutDashboard },
-    { label: "Service Catalog", href: "/services", icon: ShieldCheck },
+    { label: "Manage Users", href: "/dashboard/admin/users", icon: Users },
+    {
+      label: "Service Approvals",
+      href: "/dashboard/admin/services",
+      icon: ShieldCheck,
+    },
+    {
+      label: "All Bookings",
+      href: "/dashboard/admin/bookings",
+      icon: CalendarDays,
+    },
+    {
+      label: "Transactions",
+      href: "/dashboard/admin/transactions",
+      icon: CreditCard,
+    },
     { label: "Profile", href: "/dashboard/profile", icon: UserRound },
   ],
 };
