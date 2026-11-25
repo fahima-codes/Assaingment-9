@@ -453,24 +453,6 @@ export function AuthForm({ mode, redirect }: AuthFormProps) {
             </Button>
           </form>
 
-          {/* Demo Credentials Helper Box */}
-          <div className="mt-6 rounded-lg border border-primary/20 bg-primary/5 p-3 text-xs">
-            <p className="font-semibold text-primary mb-1">
-              Testing Credentials:
-            </p>
-            <div className="space-y-0.5 text-muted-foreground">
-              <p>
-                <strong>Admin:</strong> admin@fixmate.com / Admin123!
-              </p>
-              <p>
-                <strong>Technician:</strong> rahim@fixmate.com / Tech123!
-              </p>
-              <p>
-                <strong>Customer:</strong> sakib@fixmate.com / Customer123!
-              </p>
-            </div>
-          </div>
-
           <p className="mt-4 text-center text-sm text-muted-foreground">
             {isSignIn ? "New to FixMate? " : "Already have an account? "}
             <Link
