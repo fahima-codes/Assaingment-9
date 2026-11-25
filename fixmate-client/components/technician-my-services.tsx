@@ -215,7 +215,7 @@ export function TechnicianMyServices() {
                       <td className="px-5 py-4">
                         <span
                           className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                            APPROVAL_STYLES[status] ?? "bg-gray-100 text-gray-700"
+                            APPROVAL_STYLES[status] ?? "bg-gray-100 text-gray-700 dark:bg-zinc-800 dark:text-zinc-200"
                           }`}
                         >
                           {formatApprovalStatus(status)}

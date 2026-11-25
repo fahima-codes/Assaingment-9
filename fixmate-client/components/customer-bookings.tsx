@@ -38,7 +38,7 @@ const STATUS_STYLES: Record<string, string> = {
   "in-progress": "bg-amber-100 text-amber-800",
   completed: "bg-green-100 text-green-800",
   rejected: "bg-red-100 text-red-800",
-  cancelled: "bg-gray-100 text-gray-700",
+  cancelled: "bg-gray-100 text-gray-700 dark:bg-zinc-800 dark:text-zinc-200",
 };
 
 function formatStatus(status: string) {
@@ -230,7 +230,7 @@ export function CustomerBookings() {
               const status = booking.status.toLowerCase();
               const paymentStatus = booking.paymentStatus.toLowerCase();
               const statusStyle =
-                STATUS_STYLES[status] ?? "bg-gray-100 text-gray-700";
+                STATUS_STYLES[status] ?? "bg-gray-100 text-gray-700 dark:bg-zinc-800 dark:text-zinc-200";
 
               return (
                 <article
@@ -269,7 +269,7 @@ export function CustomerBookings() {
                           ? "bg-green-100 text-green-800"
                           : paymentStatus === "unpaid"
                             ? "bg-amber-100 text-amber-800"
-                            : "bg-gray-100 text-gray-700"
+                            : "bg-gray-100 text-gray-700 dark:bg-zinc-800 dark:text-zinc-200"
                       }`}
                     >
                       {formatStatus(paymentStatus)}

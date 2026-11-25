@@ -7,6 +7,7 @@ import { Menu, Wrench, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { ModeToggle } from "@/components/mode-toggle";
 import {
   AUTH_SESSION_CHANGE_EVENT,
   clearAuthSession,
@@ -76,7 +77,7 @@ export function Navbar() {
     : NAV_LINKS;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-white/90 backdrop-blur">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-card/90 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
@@ -110,6 +111,7 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <ModeToggle />
           {authReady && user ? (
             <details key={pathname} className="relative hidden md:block">
               <summary
@@ -135,7 +137,7 @@ export function Navbar() {
                   {ROLE_LABELS[role]}
                 </span>
               </summary>
-              <div className="absolute right-0 mt-2 w-56 rounded-md border border-border bg-white p-2 shadow-lg">
+              <div className="absolute right-0 mt-2 w-56 rounded-md border border-border bg-card p-2 shadow-lg">
                 <div className="border-b border-border px-3 py-2">
                   <p className="truncate text-sm font-semibold">{displayName}</p>
                   <span className="mt-1 inline-flex rounded-full bg-accent px-2 py-0.5 text-xs font-medium text-accent-foreground">
@@ -205,7 +207,7 @@ export function Navbar() {
       <div
         id="mobile-navigation"
         className={cn(
-          "border-t border-border bg-white md:hidden",
+          "border-t border-border bg-card md:hidden",
           !mobileOpen && "hidden"
         )}
       >

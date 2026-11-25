@@ -83,7 +83,7 @@ export function WhyChooseUs() {
           })}
         </div>
 
-        <div className="mt-10 grid auto-rows-fr gap-6 rounded-2xl bg-foreground p-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-10 grid auto-rows-fr gap-6 rounded-2xl bg-slate-900 p-8 sm:grid-cols-2 lg:grid-cols-4 dark:bg-zinc-950">
           {STATS.map((stat) => (
             <div key={stat.label} className="text-center">
               <p className="text-3xl font-bold text-white">{stat.value}</p>

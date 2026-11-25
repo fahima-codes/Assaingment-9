@@ -33,7 +33,7 @@ const STATUS_STYLES: Record<string, string> = {
   "in-progress": "bg-amber-100 text-amber-800 border-amber-200",
   completed: "bg-emerald-100 text-emerald-800 border-emerald-200",
   rejected: "bg-red-100 text-red-800 border-red-200",
-  cancelled: "bg-gray-100 text-gray-700 border-gray-200",
+  cancelled: "bg-gray-100 text-gray-700 border-gray-200 dark:bg-zinc-800 dark:text-zinc-200 dark:border-zinc-700",
 };
 
 export function AdminBookings() {
@@ -221,7 +221,7 @@ export function AdminBookings() {
                         <span
                           className={cn(
                             "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold capitalize",
-                            STATUS_STYLES[b.status.toLowerCase()] ?? "bg-gray-100 text-gray-700",
+                            STATUS_STYLES[b.status.toLowerCase()] ?? "bg-gray-100 text-gray-700 dark:bg-zinc-800 dark:text-zinc-200",
                           )}
                         >
                           {b.status === "in-progress" ? "In Progress" : b.status}

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { Toaster } from "sonner";
+import { ThemeProvider, ThemeToaster } from "@/components/theme-provider";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -20,10 +20,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full antialiased">
+    <html lang="en" className="h-full antialiased" suppressHydrationWarning>
       <body className={`${inter.className} min-h-full flex flex-col font-sans antialiased`}>
-        {children}
-        <Toaster richColors position="top-right" />
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {children}
+          <ThemeToaster />
+        </ThemeProvider>
       </body>
     </html>
   );

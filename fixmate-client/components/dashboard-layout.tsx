@@ -171,7 +171,7 @@ export function DashboardLayout({
       <aside
         id="dashboard-sidebar"
         className={cn(
-          "fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-border bg-white transition-transform duration-200 md:translate-x-0",
+          "fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-border bg-card transition-transform duration-200 md:translate-x-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
@@ -247,7 +247,7 @@ export function DashboardLayout({
       </aside>
 
       <div className="min-h-screen md:pl-64">
-        <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-white/95 px-4 backdrop-blur sm:px-6">
+        <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-card/95 px-4 backdrop-blur sm:px-6">
           <div className="flex items-center gap-3">
             <button
               type="button"

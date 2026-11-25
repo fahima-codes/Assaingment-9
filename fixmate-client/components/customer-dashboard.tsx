@@ -42,7 +42,7 @@ const STATUS_STYLES: Record<string, string> = {
   "in-progress": "bg-amber-100 text-amber-800 border-amber-200",
   completed: "bg-emerald-100 text-emerald-800 border-emerald-200",
   rejected: "bg-red-100 text-red-800 border-red-200",
-  cancelled: "bg-gray-100 text-gray-700 border-gray-200",
+  cancelled: "bg-gray-100 text-gray-700 border-gray-200 dark:bg-zinc-800 dark:text-zinc-200 dark:border-zinc-700",
 };
 
 export function CustomerDashboard() {
@@ -119,7 +119,7 @@ export function CustomerDashboard() {
             <div className="mt-6 flex flex-wrap gap-3">
               <Button
                 asChild
-                className="bg-white text-primary hover:bg-white/90 shadow-sm font-semibold"
+                className="bg-white text-primary hover:bg-white/90 shadow-sm font-semibold dark:bg-zinc-900 dark:text-orange-400 dark:hover:bg-zinc-800"
               >
                 <Link href="/services">
                   <Search className="mr-2 h-4 w-4" /> Book a Repair
@@ -234,7 +234,7 @@ export function CustomerDashboard() {
                       <span
                         className={cn(
                           "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold capitalize",
-                          STATUS_STYLES[b.status.toLowerCase()] ?? "bg-gray-100 text-gray-700",
+                          STATUS_STYLES[b.status.toLowerCase()] ?? "bg-gray-100 text-gray-700 dark:bg-zinc-800 dark:text-zinc-200",
                         )}
                       >
                         {b.status === "in-progress" ? "In Progress" : b.status}
