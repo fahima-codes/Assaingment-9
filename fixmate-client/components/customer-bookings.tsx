@@ -164,7 +164,7 @@ export function CustomerBookings() {
       }
 
       const checkoutUrl = new URL(response.url);
-      if (checkoutUrl.protocol !== "https:") {
+      if (checkoutUrl.protocol !== "https:" && checkoutUrl.protocol !== "http:") {
         throw new Error("The checkout link is invalid.");
       }
       window.location.assign(checkoutUrl.href);
