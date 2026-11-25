@@ -27,6 +27,12 @@ export const auth = betterAuth({
   secret,
   database: mongodbAdapter(mongoClient.db()),
   trustedOrigins: [...trustedOrigins],
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+    },
+  },
   emailAndPassword: {
     enabled: true,
   },
